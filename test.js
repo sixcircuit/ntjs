@@ -75,59 +75,61 @@ try{
 }
 */
 
-var __waiter = (function(){
+var __tamejs_waiter = (function(){
 
-    function waiter(key){
-        this._key = key;
+    function waiter(){
         this._pending = 0;
         this._callback = null;
         this._results = [];
     }
 
-    var factory = {};
-    var _waiters = {};
-
-    factory.get = function(key){
-        var w = _waiters[key];
-        if(!w){ w = _waiters[key] = new waiter(key) };
-        return(w);
-    };
-
-    factory.destroy = function(key){ delete _waiters[key]; };
-
     waiter.prototype.cb = function(i){
         var self = this;
+        self._pending++;
+        var once = false;
         return(function(){
+            if(once){ return; } once = true;
+            self._pending--;
             if(i === undefined){
                 self._results = arguments;
             }else{
                 self._results[i] = arguments;
             }
-            if(self._pending === 0){
-                var first = true;
-                (function finish(){
-                    factory.destroy(self._key);
-                    if(self._callback){ return self._callback(self._results); }
-                    else{ 
-                        if(first){ 
-                            first = false;
-                            process.stderr.write("error: tamejs: no callback to call back nextTicking till we get one.\n"); 
-                        }
-                        process.nextTick(finish);
-                    }
-                })();
-            }
+            self._try_finish();
         });
+    };
+
+    waiter.prototype._try_finish = function(){
+        var self = this;
+        if(self._pending !== 0){ return; }
+
+        var first = true;
+        (function finish(){
+            if(self._callback){ return self._callback(self._results); }
+            else{ 
+                if(first){ 
+                    first = false;
+                    process.stderr.write("error: tamejs: no callback to call back nextTicking till we get one.\n"); 
+                }
+                process.nextTick(finish);
+            }
+        })();
     };
 
     waiter.prototype.promise = function(){
         var self = this;
-        return({ then: function(cb, err_cb){ self._callback = cb; } });
+        return({ then: function(cb, err_cb){ 
+            self._callback = cb;
+            self._try_finish();  // if cb() is never called, make sure we don't hang
+        } });
     };
+
+    function factory(){ return(new waiter()); }
 
     return(factory);
 })();
 
+/*
 function echo(callback){
     var args = _.a(arguments);
     args.shift();
@@ -135,15 +137,29 @@ function echo(callback){
         callback.apply(null, args);
     }, 3000);
 }
+*/
 
-(async function(){
-    _.p("waiting.");
-    for(var i = 0; i < 10; i++){
-        echo(__waiter.get("test_key").cb(i), 1, 2, 3);
-    }
-    var results = await __waiter.get("test_key").promise();
-    _.p("results: ", results);
-    _.p("done.");
+async function echo(callback){
+    var args = _.a(arguments);
+    args.shift();
+    var __w = new __tamejs_waiter();
+    setTimeout(__w.cb(), 1000);
+    await __w.promise();
+    callback.apply(null, args);
+}
+
+
+(function(){
+    (async function(){
+        _.p("waiting.");
+        var __w = new __tamejs_waiter();
+        for(var i = 0; i < 10; i++){
+            echo(__w.cb(i), i+1, i+2, i+3);
+        }
+        var results = await __w.promise();
+        _.p("results: ", results);
+        _.p("done.");
+    })();
 })();
 
 /*
