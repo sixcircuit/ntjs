@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "dry-underscore": "^0.24.2"
+  }
+}
