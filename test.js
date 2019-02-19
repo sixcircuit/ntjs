@@ -103,13 +103,12 @@ var __tamejs_waiter = (function(){
         var self = this;
         if(self._pending !== 0){ return; }
 
-        var first = true;
+        var once = false;
         (function finish(){
             if(self._callback){ return self._callback(self._results); }
             else{ 
-                if(first){ 
-                    first = false;
-                    process.stderr.write("error: tamejs: no callback to call back nextTicking till we get one.\n"); 
+                if(!once){ once = true;
+                    process.stderr.write("error: tamejs: no callback to call back nextTick'n till we get one.\n"); 
                 }
                 process.nextTick(finish);
             }
