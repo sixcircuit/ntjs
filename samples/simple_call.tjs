@@ -35,6 +35,20 @@ function square(n) {
     }
     */
 
+   /*
+    try{
+       await{
+          for(var i = 0; i < 10; i++){
+             try{
+                call(1, 2, _.plumb(defer(var x[i], y[i], z[i]), callback));
+             }catch(e){}
+          }
+       }
+    }catch(e){
+    }
+    */
+
+
     var x = 0;
     while(x < 2){ x++; }
     return n * n;

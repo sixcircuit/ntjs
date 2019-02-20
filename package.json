@@ -5,6 +5,7 @@
     "babel-traverse": "^6.26.0",
     "babel-types": "^6.26.0",
     "babylon": "^6.18.0",
+    "dry-test": "^0.1.6",
     "dry-underscore": "^0.24.2"
   }
 }

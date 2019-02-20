@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+var _ = require('dry-underscore');
+var parser = require('../lib/parser.js');
+
+var all_time = _.time();
+
+function usage(code){
+   _.stderr.write("usage: tamejs [--map] <path.tjs>");
+   _.exit(code || 0);
+}
+
+(function(){
+
+   var args = process.argv.slice(2);
+
+   if(args.length === 0){
+      return usage(1);
+   }
+
+   var print_map = false;
+   if(args[0] === "--map"){
+      print_map = true;
+      args.shift();
+   }
+
+   var gen = parser.file({ path: args[0], generator: { sourceMaps: print_map } });
+
+   if(print_map){
+      _.stdout(gen.map);
+   }else{
+      _.stdout(gen.code);
+   }
+
+   all_time("transform took");
+
+})();
