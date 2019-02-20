@@ -1,0 +1,18 @@
+
+function square(n) {
+    if(x === y){ }
+    // tame{ blah(defer()); }
+    // tame   { blah(defer()); }
+    // atame { blah(defer()); }
+    var _w = "test";
+    await { 
+       blah(1, hello(), defer(var a, b, c), _w);
+       blah(1, hello(), defer( var  a, b, c), _w);
+       blah(1, hello(), defer(let a, b, c), _w);
+       blah(1, hello(), defer( let  a, b, c), _w);
+       blah(defer(a, b, c));
+    }
+    var x = 0;
+    while(x < 2){ x++; }
+    return n * n;
+}

@@ -10,6 +10,27 @@ var find_defer = /\bdefer[\s]*\(/gm;
 
 var match = find_await_block.exec(src);
 
+var __tamejs_waiter = require('./tamejs.runtime.js');
+
+function transform_file_sync(path){
+
+}
+
+function transform_file(path, callback){
+
+}
+
+function transform(src){
+    var out = "";
+
+
+}
+
+function next_function(src){
+
+
+}
+
 // don't forget to do this recursively after you do the outer await match
 
 /*
@@ -74,59 +95,6 @@ try{
 }catch(e){
 }
 */
-
-var __tamejs_waiter = (function(){
-
-    function waiter(){
-        this._pending = 0;
-        this._callback = null;
-        this._results = [];
-    }
-
-    waiter.prototype.cb = function(i){
-        var self = this;
-        self._pending++;
-        var once = false;
-        return(function(){
-            if(once){ return; } once = true;
-            self._pending--;
-            if(i === undefined){
-                self._results = arguments;
-            }else{
-                self._results[i] = arguments;
-            }
-            self._try_finish();
-        });
-    };
-
-    waiter.prototype._try_finish = function(){
-        var self = this;
-        if(self._pending !== 0){ return; }
-
-        var once = false;
-        (function finish(){
-            if(self._callback){ return self._callback(self._results); }
-            else{ 
-                if(!once){ once = true;
-                    process.stderr.write("error: tamejs: no callback to call back nextTick'n till we get one.\n"); 
-                }
-                process.nextTick(finish);
-            }
-        })();
-    };
-
-    waiter.prototype.promise = function(){
-        var self = this;
-        return({ then: function(cb, err_cb){ 
-            self._callback = cb;
-            self._try_finish();  // if cb() is never called, make sure we don't hang
-        } });
-    };
-
-    function factory(){ return(new waiter()); }
-
-    return(factory);
-})();
 
 /*
 function echo(callback){
