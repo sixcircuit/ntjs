@@ -6,14 +6,12 @@ function square(n) {
     // tame   { blah(defer(var x, y, z)); }
     // atame { blah(defer()); }
 
-    /*
     await { 
        blah(1, hello(), defer(var a, b, c), 1);
        blah(1, hello(), defer( var  a, b, c), 2);
        blah(1, hello(), defer( let  a, b, c), 3);
        blah(defer(a, b, c));
     }
-    */
 
     await{
        blah(1, hello(), _.plumb(defer(), callback), 4);

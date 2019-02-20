@@ -44,39 +44,48 @@ function defer_results_lhs(call){
    return(declaration_type + "[" + args.join(",") + "]");
 }
 
-function handle_results_ast(waiter_id, defer_calls){
+function handle_results_ast(results_id, waiter_id, defer_calls){
 
-   var ast = {};
+   function get_function_body(node){
+      return node.expression.callee.body.body
+   }
 
-   if(defer_calls.length === 1){
-      var call = _.first(defer_calls);
-
-      let lhs = defer_results_lhs(call);
+   function await_results_ast(lhs){
       // parser hack. need to wrap it with async function or it's not happy
+      //
       var ast = parse(`(async function(){ 
          ${lhs} = await ${waiter_id}.promise();
       })();`);
 
-      ast = ast.expression.callee.body.body;
-   }else{
+      ast = _.first(get_function_body(ast));
 
-
+      return(ast);
    }
 
-   return(ast);
+   if(defer_calls.length === 1){
 
-   let spread_results = [];
+      var call = _.first(defer_calls);
 
-   /*
-   let [x, y, z] = _results[0];
-   let [err, b] = _results[1];
-   */
-   
-   // let [x, y, z] = await __awaiter("uuid").promise();
-   // ast(`const ${waiter_id} = __tamejs_waiter();`);
+      let lhs = defer_results_lhs(call);
 
-   // _.p(handle_results_ast);
+      var ast = await_results_ast(lhs);
 
+      return(ast);
+
+   }else{
+
+      let ast = [];
+
+      ast.push(await_results_ast(`const ${results_id}`));
+
+      _.each(defer_calls, function(call, index){
+         let lhs = defer_results_lhs(call);
+         let assignment_ast = parse(`${lhs} = ${results_id}[${index}];`);
+         ast.push(assignment_ast);
+      });
+
+      return(ast);
+   }
 }
 
 const main_visitor = {
@@ -86,7 +95,6 @@ const main_visitor = {
       path.getFunctionParent().node.async = true;
 
       let waiter_id = path.scope.generateUidIdentifier("tame_w").name;
-      let results_id = path.scope.generateUidIdentifier("tame_r").name;
 
       let body = path.get("body");
 
@@ -116,9 +124,12 @@ const main_visitor = {
 
       _.p("defer_calls: ", defer_calls);
 
-      let handle_results = handle_results_ast(waiter_id, defer_calls);
+      let results_id = path.scope.generateUidIdentifier("tame_r").name;
+
+      let handle_results = handle_results_ast(results_id, waiter_id, defer_calls);
 
       let new_ast = _.concat(create_waiter_ast, deferred_calls, handle_results);
+      console.dir(handle_results);
 
       path.replaceWithMultiple(new_ast);
    }
