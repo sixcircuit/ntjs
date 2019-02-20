@@ -1,0 +1,32 @@
+"use strict";
+
+var _ = require('dry-underscore');
+var eq = _.test.eq;
+var ok = _.test.ok;
+
+var flag = false;
+
+test("pass through / compile test", function(done){
+
+   (function(cb){
+      function make_dict () {
+         for (var i = 0; i < 100; i++);
+         var d = { cat : function (n, cb) {
+            for (var i = 0; i < n; i++) {
+               await { setTimeout (defer (), 5 * Math.random ()); }
+            }
+            cb ();
+         }, n : 10 };
+         for (var i = 0; i < 100; i++);
+         return d;
+      };
+
+      var d = make_dict ();
+      await { d.cat (d.n, defer ()); }
+      flag = true;
+      cb ();
+   })(function(){
+      ok(flag, "flag was set");
+      done();
+   });
+});
