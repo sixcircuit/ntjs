@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+var _ = require('dry-underscore');
+var cp = require('child_process');
+var root = _.path.fun(_.path.normalize(__dirname));
+var parser = require('./lib/parser.js');
+
+var shell = function(command, options){
+   try{ cp.execSync(command, _.extend({}, options, { stdio: [0,1,2] })); }
+   catch(error){ return(error.status); } // error code 
+   return(0);
+};
+
+(function main(){
+
+   var files = _.fs.files.sync(root('tests'));
+
+   _.each(files, function(file){
+      var ext = _.path.extension(file.name);
+      if(ext === "tjs"){
+         _.p("processing: ", "tests/" + file.name);
+         var dest = _.path.extension(file.path, "") + ".test.js";
+         var gen = parser.file(file.path);
+         _.fs.write_file.sync(dest, gen.code);
+      }
+   });
+
+   shell(root("./node_modules/dry-test/bin/dry-test") + " " + root("tests"));
+
+})();

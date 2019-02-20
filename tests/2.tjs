@@ -2,7 +2,7 @@
 
 var _ = require('dry-underscore');
 var eq = _.test.eq;
-var ok = _.test.eq;
+var ok = _.test.ok;
 
 var slots = {};
 var n = 40;
@@ -25,5 +25,6 @@ test("simple parallel await", function(done){
 	    for (var i = 0; i < n; i++) {
 	        ok(slots[i], "slot[" + i + "] is set");
 	    }
+       done();
     });
 });
