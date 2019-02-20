@@ -1,0 +1,23 @@
+"use strict";
+
+var _ = require('dry-underscore');
+var eq = _.test.eq;
+var ok = _.test.ok;
+
+var inlist = [ "dog", "cat", "bird", "seal", "donkey" ];
+var outlist = [];
+
+test("for..in iteration 00", function(done){
+
+   (function(cb){
+      for (var animal in inlist) {
+         await { setTimeout (defer (), 10 * Math.random ()); }
+         outlist.push (inlist[animal]);
+      }
+      cb ();
+   })(function(){
+      eq(inlist, outlist, "zoo equivalence");
+      done();
+   });
+
+});
