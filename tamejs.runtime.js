@@ -14,11 +14,7 @@
         return(function(){
             if(once){ return; } once = true;
             self._pending--;
-            if(i === undefined){
-                self._results = arguments;
-            }else{
-                self._results[i] = arguments;
-            }
+            self._results[i || 0] = arguments;
             self._try_finish();
         });
     };
