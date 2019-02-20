@@ -137,24 +137,3 @@ async function echo(callback){
 })();
 */
 
-/*
-var count = 0;
-
-function foo(it) {
-    setTimeout(function(){
-        it.next();
-    }, 20000);
-}
-
-const iterator = foo(i);
-
-for(var i = 0; i < 3; i++){
-    _.p("waiting.");
-    (function* it(){
-        foo(it);
-        yeild
-    })();
-    _.p("back.");
-}
-*/
-

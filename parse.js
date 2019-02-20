@@ -29,21 +29,20 @@ function print_steps(){
    steps.in = code;
 
    _.each(block_keywords, function(word){
-      code = code.replace(_.regex("\\b" + word + "\\s*{", "g"), "while(___tame_await___){");
+      code = code.replace(_.regex("\\b" + word + "\\s*{", "g"), "while(__tame_await__){");
    });
 
    _.each(var_keywords, function(word){
       // var find_defer = /\bdefer[\s]*\(/gm;
       // \bdefer\s*\(\s*var\b
       var match = "\\b" + "defer" + "\\s*\\(\\s*" + word + "\\b";
-      _.p("match: ", match);
-      code = code.replace(_.regex(match, "g"), "defer(___tame_" + word + "___,");
+      code = code.replace(_.regex(match, "g"), "defer(__tame_" + word + "__,");
 
    });
 
    steps.replaced = code;
 
-   print_steps();
+   // print_steps();
 
    var plugin = require('./tamejs.plugin.js')({
       types: types,
@@ -61,8 +60,16 @@ function print_steps(){
 
    var code = generate(ast, {}, code);
 
-   all_time("transform took:");
+   code = code.code;
 
-   steps.out = code.code;
+   code = _.replace(code, "while(__tame_await__){", "await{");
+   code = _.replace(code, "__tame_var__,", "let");
+   code = _.replace(code, "__tame_let__,", "let");
+
+   steps.out = code;
+
+   print_steps();
+
+   all_time("transform took:");
 
 })();
