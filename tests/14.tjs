@@ -25,7 +25,7 @@ function MyClass (lim) {
 var obj = null;
 var n = 30;
 
-test("test of 'this' inside of a tamed class", function(fin){
+test("test of 'this' inside of a tamed class", function(done){
 
    (function(cb){
       obj = new MyClass (n);
@@ -36,7 +36,7 @@ test("test of 'this' inside of a tamed class", function(fin){
       cb();
    })(function(){
       eq(obj.iter(), n, "achieved n iterations");
-      fin();
+      done();
    });
 
 });

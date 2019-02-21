@@ -24,7 +24,13 @@ function usage(code){
       args.shift();
    }
 
-   var gen = parser.file({ path: args[0], generator: { compact: false, sourceMaps: print_map } });
+   var gen = parser.file({ 
+      path: args[0], 
+      generator: { 
+         compact: false, 
+         sourceMaps: print_map 
+      } 
+   });
 
    if(print_map){
       _.stdout(gen.map);
