@@ -1,0 +1,29 @@
+"use strict";
+
+var _ = require('dry-underscore');
+var eq = _.test.eq;
+var ok = _.test.ok;
+
+var slots = {};
+var n = 40;
+
+test("test do..while...", function(done){
+
+   (function(cb){
+      var i = 0;	
+      do {
+         await { 
+            setTimeout (defer (), 1); 
+            setTimeout (defer (), 2); 
+         }
+         slots[i] = 1;
+         i++;
+      } while (i < n);
+      cb();
+   })(function(){
+      for (var i = 0; i < n; i++) {
+         ok(slots[i], "slot[" + i + "] is set");
+      }
+      done();
+   });
+});

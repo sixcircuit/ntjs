@@ -7,20 +7,20 @@ var ok = _.test.ok;
 var res = 0;
 
 function foo (cb) {
-    await { setTimeout (defer (), 10 * Math.random ()); }
-    res++;
-    cb();
+   await { setTimeout (defer (), 10 * Math.random ()); }
+   res++;
+   cb();
 };
 
 test("parser variations 01", function(done){
 
-    (function(cb){
-	    if (true) await{ foo (defer ()); }
-	    if (false) await{ foo (defer ()); }
-	    if (true) await{ foo (defer ()); }
-	    cb();
-    })(function(){
-	    eq(res, 2, "only two increment fired");
-       done();
-    });
+   (function(cb){
+      if (true) await{ foo (defer ()); }
+      if (false) await{ foo (defer ()); }
+      if (true) await{ foo (defer ()); }
+      cb();
+   })(function(){
+      eq(res, 2, "only two increment fired");
+      done();
+   });
 });

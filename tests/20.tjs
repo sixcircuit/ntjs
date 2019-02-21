@@ -1,0 +1,31 @@
+"use strict";
+
+var _ = require('dry-underscore');
+var eq = _.test.eq;
+var ok = _.test.ok;
+
+var slots = {};
+var n = 10;
+
+test("test nested serial/parallel", function(done){
+    
+    (function(cb){
+        await {
+            // for (var i = 0; i < n; i++) {
+                (function (cb) {
+                    var my_i = i;
+                    await { setTimeout (defer (), 5*Math.random ()); }
+                    await { setTimeout (defer (), 4*Math.random ()); }
+                    slots[my_i] = true;
+                    cb();
+                })(defer ());
+            // }
+        }
+	    cb();
+    })(function(){
+        for (var i = 0; i < n; i++) {
+	        ok(slots[i], "slots[" + i + "] is set!");
+        }
+        done();
+    });
+});
