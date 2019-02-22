@@ -11,4 +11,16 @@ test("defer", function(done){
    done();
 
 });
+
+test("defer immediate", function(done){
+
+   function immediate(callback, x){ callback(x); }
+
+   await{ immediate(defer(var one), 1); }
+
+   eq(one, 1);
+
+   done();
+
+});
  

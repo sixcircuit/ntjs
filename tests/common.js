@@ -18,6 +18,7 @@ var { eq, ok } = _.test;
 var async = { echo: async_echo, inc: async_inc };
 
 module.exports = {
+   _,
    async,
    ok, eq
 };

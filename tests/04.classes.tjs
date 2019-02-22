@@ -1,0 +1,143 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+test("test of 'this' inside of a tamed class", function(done){
+
+   function MyClass (lim) {
+      this._i = 0;
+      this._lim = lim;
+
+      this.iter = function () { return this._i; }
+
+      this.next = function (cb) {
+         var done = false;
+         if (this._i >= this._lim) {
+            done = true;
+         } else {
+            await { async.echo(defer()); }
+            this._i ++;
+         }
+         cb (done);
+      };
+   };
+
+   var n = 30;
+
+   var obj = new MyClass (n);
+
+   var flag = false;
+
+   while (!flag) {
+      await { obj.next(defer(flag)); }
+   }
+
+   eq(obj.iter(), n, "achieved n iterations");
+   done();
+
+});
+
+test("a test of for (var i in this._foo)", function(done){
+
+   var res = 0;
+   var i = 0;
+
+   function Class () {
+
+      this._v = [];
+
+      for (var i = 0; i < 10; i++) { this._v.push (i); }
+
+      this.run = function (cb) {
+         this._u = [];
+         for (var i in this._v) {
+            this._u.push (this._v[i]);
+            await { async.echo(defer()); }
+         }
+         cb ();
+      };
+
+      this.check = function () {
+         return JSON.stringify (this._v) == JSON.stringify (this._u);
+      };
+   };
+
+   var obj = new Class ();
+
+   await { obj.run(defer ()); }
+
+   ok(obj.check(), "made it through 10 times");
+
+   done();
+
+});
+
+test("test of 'this' inside of a tamed class do while", function(done){
+
+   function MyClass (lim) {
+      this._i = 0;
+      this._lim = lim;
+
+      this.iter = function () { return this._i; }
+
+      this.next = function (cb) {
+         var done = false;
+         await { async.echo(defer()); }
+         do { 
+            if (this._i >= this._lim) {
+               done = true;
+            } else {
+               this._i ++;
+            }
+         } while (0);
+         await { async.echo(defer()); }
+         cb (done);
+      };
+   };
+
+
+   var n = 30;
+
+   var obj = new MyClass (n);
+
+   var flag = false;
+
+   while (!flag) {
+      await { obj.next(defer (flag)); }
+   }
+
+   eq(obj.iter(), n, "achieved n iterations");
+
+   done();
+});
+
+test("appropriate this translation for tamed while", function(done){
+
+   var sum = 0;
+   var i = 0;
+
+   function Class () {
+      this._stop = false;
+
+      this.run = function (cb) {
+         var i = 0;
+         var tot = 0;
+         while (!this._stop) {
+            await{ async.echo(defer()); }
+            tot += i;
+            i += 1;
+            if (i >= 10) { this._stop = true; }
+         }
+         cb (tot);
+      };
+   };
+
+
+   var c = new Class();
+   await{ c.run (defer(var res)); }
+
+   eq(res, 45, "loop broke");
+
+   done();
+
+});

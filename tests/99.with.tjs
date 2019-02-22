@@ -1,0 +1,23 @@
+
+// can't use strict 
+
+var { _, eq, ok, async } = require('./common.js');
+
+test("test with{} statements", function(done){
+
+   var slots = {};
+   var env = { i : 0, n : 10, sum : 0 };
+
+   with(env){
+      while (i < n) {
+         await { async.echo(defer()); }
+         sum += i;
+         i++;
+      }
+   }
+
+   ok((env.i == env.n && env.sum == 45), "env was properly modified"); 
+
+   done();
+
+});

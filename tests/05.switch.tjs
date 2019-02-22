@@ -1,0 +1,92 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+function callback_f(ev){ 
+   await { async.echo(defer()); }
+   ev(); 
+}
+
+test("switch & case statement", function(done){
+
+   var results = [];
+
+   function runsw(x, cb){
+
+      switch (x) {
+         case 0:
+            await { callback_f (defer ()); }
+            results.push (0);
+            break;
+         case 17:
+            case 1:
+            await { callback_f (defer ()); }
+            results.push (1);
+            break;
+         case 2:
+            await { callback_f (defer ()); }
+            results.push (2);
+         case 18:
+            case 3:
+            await { callback_f (defer ()); }
+            results.push (3);
+         default:
+            await { callback_f (defer ()); }
+            results.push (4);
+            break;
+      }
+      cb ();
+   }
+
+   var lst = [ 0, 1, 2, 3, 4, 18, 17];
+
+   for (var i in lst) {
+      await { runsw (lst[i], defer ()); }
+   }
+
+   eq(results, [0,1,2,3,4,3,4,4,3,4,1], "cascade check");
+
+   done();
+
+});
+
+test("switch & case statement", function(done){
+
+   var results = [];
+
+   function runsw (x, cb) {
+      switch (x) {
+         case "zero":
+            await { callback_f (defer ()); }
+            results.push (0);
+            break;
+         case "seventeen":
+            case "one":
+            await { callback_f (defer ()); }
+            results.push (1);
+            break;
+         case "two":
+            await { callback_f (defer ()); }
+            results.push (2);
+         case "eighteen":
+            case "three":
+            await { callback_f (defer ()); }
+            results.push (3);
+         default:
+            await { callback_f (defer ()); }
+            results.push (4);
+            break;
+      }
+      cb ();
+   }
+
+   var lst = [ "zero", "one", "two", "three", "four", "eighteen", "seventeen" ];
+
+   for (var i in lst) {
+      await { runsw (lst[i], defer ()); }
+   }
+
+   eq(results, [0,1,2,3,4,3,4,4,3,4,1], "cascade check");
+
+   done();
+});

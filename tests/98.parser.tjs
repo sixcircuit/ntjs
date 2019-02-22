@@ -1,0 +1,117 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+test("pass through / compile test", function(done){
+
+   var flag = false;
+
+   function make_dict () {
+      for (var i = 0; i < 100; i++);
+      var d = { cat : function (n, cb) {
+         for (var i = 0; i < n; i++) {
+            await { async.echo(defer()); }
+         }
+         cb ();
+      }, n : 10 };
+      for (var i = 0; i < 100; i++);
+      return d;
+   };
+
+   (function(cb){
+      var d = make_dict();
+      await{ d.cat(d.n, defer()); }
+      flag = true;
+      cb();
+   })(function(){
+      ok(flag, "flag was set");
+      done();
+   });
+});
+
+test("test that decimal literals compile", function(done){
+   // This is a compilation test to make sure that decimal numbers work.
+   // no runtime test is required.
+
+   var dec = 0.2, b = -.11, c = -1.222, d = 10000.111111, e = -1000;
+
+   done();
+});
+
+
+test("parsing and lexing of equalities", function(done){
+
+   var sum = 0;
+   var i = 0;
+
+   if (1 === 1) { i++; }
+   if (1 == 1) { i++; }
+   if (1 != 2) { i++; }
+   if (1 !== 2) { i++; }
+   if (3 <= 4) { i++; }
+   if (!!30) { i++; }
+   if (5 >= 1) { i++; }
+
+   eq(i, 7, "all 7 worked");
+
+   done();
+
+});
+
+test("simple arguments test await", function(done){
+
+   var slots = {};
+   var n = 40;
+
+   function noAwait(callback){
+      slots.noAwait = [];
+      for(var i = 1; i < arguments.length; i++){
+         slots.noAwait.push(arguments[i]);
+      }
+      callback();
+   }
+
+   function singleAwait(callback){
+      slots.singleAwait = [];
+      await { async.echo(defer()); }
+      for(var i = 1; i < arguments.length; i++){
+         slots.singleAwait.push(arguments[i]);
+      }
+      callback();
+   }
+
+   function doubleAwait(callback){
+      slots.doubleAwait = [];
+      await { async.echo(defer()); }
+      (function(){
+         await { async.echo(defer()); }
+         for(var i = 0; i < arguments.length; i++){
+            slots.doubleAwait[i] = arguments[i];
+         }
+         callback();
+      })(1, 2, 3);
+   }
+
+   function deepAwait(callback){
+      slots.deepAwait = [];
+      (function(){
+         await { async.echo(defer()); }
+         for(var i = 0; i < arguments.length; i++){
+            slots.deepAwait[i] = arguments[i];
+         }
+         callback();
+      })(4, 5, 6);
+   }
+
+   await{ noAwait(defer(), "a", "b", "c"); }
+   await{ singleAwait(defer(), "c", "d", "e"); }
+   await{ doubleAwait(defer()); }
+   await{ deepAwait(defer()); }
+
+   eq(slots.noAwait, ["a", "b", "c"]);
+   eq(slots.singleAwait, ["c", "d", "e"]);
+   eq(slots.doubleAwait, [1, 2, 3]);
+   eq(slots.deepAwait, [4, 5, 6]);
+
+   done();
+});

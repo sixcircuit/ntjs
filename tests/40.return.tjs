@@ -1,0 +1,99 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+test("a test of return", function(done){
+
+   var i = 0;
+   var n = 11;
+
+   (function(cb){
+      while (i < n + 4) {
+         await { async.echo(defer()); }
+         i++;
+         if (i == n) {
+            cb();
+            return;
+         }
+      }
+   })(function(){
+      eq(i, n, "return at right moment");
+      done();
+   });
+});
+
+test("test that EventEmitter-type-things works", function(done){
+
+   function eeStyle (cb) {
+      var ret = {};
+      setTimeout(function(){ ret.slot = 10; cb(); }, 4);
+      return ret;
+   };
+
+   var tmp;
+
+   await { 
+      tmp = eeStyle(defer ());
+   }
+
+   eq(tmp.slot, 10);
+
+   done();
+
+});
+
+test("test that return value side effects happen", function(done){
+
+   var side_effect = 0;
+
+   function do_side_effect(){
+      side_effect = 1;
+      return 10;
+   }
+
+   function foo(){
+      await{ setTimeout(defer(), 2); }
+      return do_side_effect();
+   };
+
+
+   foo ();
+   await{ setTimeout(defer(), 5); }
+   eq(side_effect, 1);
+
+   done();
+});
+
+
+test("test that return value side effects happen again", function(done){
+
+   var side_effect = 0;
+
+   function do_side_effect(){
+      side_effect = 1;
+      return 10;
+   };
+
+   function do_unwanted_side_effect(){
+      side_effect = 2;
+      return 10;
+   };
+
+   function foo(){
+      await{ setTimeout(defer(), 2); }
+      if (true) {
+         return do_side_effect();
+      } else {
+         return do_unwanted_side_effect();
+      }
+   };
+
+   foo();
+
+   await{ setTimeout (defer (), 5); }
+
+   eq(side_effect, 1);
+
+   done();
+
+});

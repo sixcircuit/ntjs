@@ -30,18 +30,22 @@ var shell = function(command, options){
 
    var run_files = [];
 
+   shell("mkdir " + root("tests"));
+
    _.each(files, function(file){
       var ext = _.path.extension(file.name);
       if(ext === "tjs"){
          _.p("processing: ", "tests/" + file.name);
-         var dest = _.path.extension(file.path, "") + ".test.js";
+         var dest = root("tests", (_.path.extension(file.name, "") + ".test.js"));
          var gen = parser.file(file.path);
          _.fs.write_file.sync(dest, gen.code);
          run_files.push(dest);
-      }else if(ext === "js"){
+      }else if(ext === "js" && file.name !== "common.js"){
          run_files.push(file.path);
       }
    });
+
+   run_files = _.unique(run_files);
 
    if(run_files.length){
       shell(root("./node_modules/dry-test/bin/dry-test") + " " + run_files.join(" "));
