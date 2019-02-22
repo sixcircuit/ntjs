@@ -1,0 +1,24 @@
+"use strict";
+
+var _ = require('dry-underscore');
+var eq = _.test.eq;
+var ok = _.test.ok;
+
+var slots = {};
+var n = 10;
+
+test("test await with no curlies", function(done){
+
+   (function(cb){
+      for (var i = 0; i < n; i++) {
+         await setTimeout (defer (), 3 * Math.random ());
+         slots[i] = 1;
+      }
+      cb();
+   })(function(){
+      for (var i = 0; i < n; i++) {
+         ok(slots[i], "slot[" + i + "] is set");
+      }
+      done();
+   });
+});

@@ -1,0 +1,18 @@
+"use strict";
+
+var { eq, ok, async_echo } = require('./common.js');
+
+test("array notation", function(done){
+    
+   for(var i = 0; i < 100; i++){
+      await { 
+         async_echo(defer(var x[_], y[_]), i, i*2);
+      }
+   }
+
+   eq(x, _.range(100));
+   eq(y, _.map(_.range(100), function(v){ return(v*2); }));
+
+   done();
+
+});
