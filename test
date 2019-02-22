@@ -14,6 +14,21 @@ var shell = function(command, options){
 (function main(){
 
    var files = _.fs.files.sync(root('tests'));
+   var args = process.argv.slice(2);
+
+   var whitelist = args
+
+   if(whitelist.length){
+      files = _.filter(files, function(file){ 
+         var item = _.find(whitelist, function(entry){
+            var match = (file.name.indexOf(entry) >= 0)
+            return(match);
+         });
+         return(item !== undefined);
+      });
+   }
+
+   var run_files = [];
 
    _.each(files, function(file){
       var ext = _.path.extension(file.name);
@@ -22,9 +37,14 @@ var shell = function(command, options){
          var dest = _.path.extension(file.path, "") + ".test.js";
          var gen = parser.file(file.path);
          _.fs.write_file.sync(dest, gen.code);
+         run_files.push(dest);
+      }else if(ext === "js"){
+         run_files.push(file.path);
       }
    });
 
-   shell(root("./node_modules/dry-test/bin/dry-test") + " " + root("tests"));
+   if(run_files.length){
+      shell(root("./node_modules/dry-test/bin/dry-test") + " " + run_files.join(" "));
+   }
 
 })();

@@ -1,0 +1,52 @@
+"use strict";
+
+var { eq, ok, async } = require('./common.js');
+
+
+test("if with braces", function(done){
+
+   var x = 0;
+
+   if (true){ 
+      await{ async.inc(defer(x), x); }
+   }
+   eq(x, 1);
+
+   x++;
+
+   eq(x, 2, "both increments fired");
+
+   done();
+
+});
+
+test("if no braces", function(done){
+
+   var x = 0;
+
+   if (true) await{ async.inc(defer(x), x); }
+
+   eq(x, 1);
+
+   x++;
+
+   eq(x, 2, "both increments fired");
+
+   done();
+
+});
+
+
+test("several ifs", function(done){
+
+   var x = 0;
+
+   if (true) await{ async.inc(defer(x), x); }
+   if (false) await{ async.inc(defer(x), x); }
+   if (true) await{ async.inc(defer(x), x); }
+   if (true) await{ async.inc(defer(x), x); }
+
+   eq(x, 3, "only three increment fired");
+   done();
+
+});
