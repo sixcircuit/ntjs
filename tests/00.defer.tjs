@@ -12,7 +12,6 @@ test("defer one", function(done){
 
 });
 
-
 test("defer immediate", function(done){
 
    await{ immediate(defer(var one), 1); }
