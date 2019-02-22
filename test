@@ -30,7 +30,7 @@ var shell = function(command, options){
 
    var run_files = [];
 
-   shell("mkdir " + root("tests"));
+   shell("mkdir " + root("tests") + " 2> /dev/null");
 
    var parse_time = _.time();
    _.each(files, function(file){

@@ -2,17 +2,56 @@
 
 var { _, eq, ok, async } = require('./common.js');
 
+test("var x, y", function(done){
+
+   await{ async.echo(defer(var x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("let x, y", function(done){
+
+   await{ async.echo(defer(let x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("const x, y", function(done){
+
+   await{ async.echo(defer(const x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("assign to x, y", function(done){
+   let x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+/*
+test("assign to const x, y", function(done){
+   const x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+*/
+
+/*
 test("a test of fulfill values", function(done){
 
    for(var i = 0; i < 20; i++){
-      var x = 3 * Math.random();
+      var x = Math.random();
       await{ async.echo(defer(var y, z), x, 2); }
-      eq(x, y);
+      eq(y, x);
       eq(z, 2);
    }
 
    done();
 });
+*/
 
 /*
 test("assign to array index", function(done){
@@ -158,13 +197,12 @@ test("array notation serial each async", function(done){
    eq(y, expected_y);
 
    done();
-
 });
 
-/*
-
 test("array notation parallel", function(done){
+   throw new Error("need to finish parallel array notation");
     
+   /*
    var x = [];
 
    await { 
@@ -177,9 +215,11 @@ test("array notation parallel", function(done){
    eq(y, expected_y);
 
    done();
+   */
 
 });
 
+/*
 test("array notation parallel each", function(done){
     
    var x = [];
@@ -208,6 +248,53 @@ test("array notation parallel raw", function(done){
    }
 
    eq(x, expected_raw);
+
+   done();
+
+});
+
+test("array notation multiple parallel each", function(done){
+    
+   await { 
+      _.each(_.range(n), function(i){
+         (function(cb){
+            var t = _.timestamp();
+            await{
+               async.echo(10, defer(let x, y), i, i*2);
+               async.echo(20, defer(let xx, yy), i*3, i*4);
+            }
+            t = _.timestamp() - t;
+            ok(t >= 20 && t < 25); // ran in parallel
+            cb(x, y, xx, yy);
+         })(defer(let x[], y[], xx[], yy[]))
+      });
+   }
+
+   eq(x, expected_x);
+   eq(y, expected_y);
+   eq(xx, _.map(_.range(n), function(n){ return(n*3); });
+   eq(yy, _.map(_.range(n), function(n){ return(n*4); });
+
+   done();
+
+});
+
+
+test("array notation multiple parallel each", function(done){
+    
+   await { 
+      _.each(_.range(n), function(i){
+         async.echo(defer(let x[], y[]), i, i*2);
+         async.echo(defer(let xx[], yy[]), i, i*2);
+      });
+   }
+
+   eq(x, expected_x);
+   eq(y, expected_y);
+
+   eq(xx, expected_x);
+   eq(yy, expected_y);
+
 
    done();
 

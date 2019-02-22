@@ -7,12 +7,20 @@ function async_wait(callback, msec){
    }, msec);
 }
 
-
 function async_echo(callback){ 
    var args = _.a(arguments).slice(1);
+
+   var delay = (Math.random() * 10);
+
+   if(_.isNumber(callback)){ 
+      delay = callback;
+      callback = args[0];
+      args.shift();
+   }
+
    setTimeout(function(){
       return callback.apply(null, args);
-   }, (Math.random() * 10));
+   }, delay);
 }
 
 function async_inc(callback, i){ 
