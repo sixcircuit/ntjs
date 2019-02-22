@@ -1,0 +1,19 @@
+"use strict";
+
+var { _, eq, ok, async, immediate } = require('./common.js');
+
+test("plumb one", function(done){
+
+   function handler(err){
+      ok(err.flag);
+      done();
+   }
+
+   await{ async.echo(_.plumb(defer(), handler), { flag: true }); }
+
+   ok(false);
+
+   // never gets here
+
+});
+
