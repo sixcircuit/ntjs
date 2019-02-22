@@ -2,7 +2,6 @@
 
 var { _, eq, ok, async } = require('./common.js');
 
-/*
 test("a test of fulfill values", function(done){
 
    for(var i = 0; i < 20; i++){
@@ -15,6 +14,7 @@ test("a test of fulfill values", function(done){
    done();
 });
 
+/*
 test("assign to array index", function(done){
 
    var a = [];
@@ -84,79 +84,122 @@ test("test capture of defer slots", function(done){
 });
 */
 
-/*
 const n = 10;
-const expected_combined = _.map(_.range(n), function(v){ return([v, v*2]); });
-const expected_one = _.map(_.range(n), function(v){ return([v]); });
-const expected_two = _.map(_.range(n), function(v){ return([v*2]); });
+const expected_x = _.map(_.range(n), function(v){ return(v); });
+const expected_y = _.map(_.range(n), function(v){ return(v*2); });
+const expected_raw = _.map(_.range(n), function(v){ return([v, v*2]); });
 
 test("array notation serial", function(done){
 
    var x = [];
 
+   // works because control structures get suspended in whole async function
    for(var i = 0; i < n; i++){
       await { 
          async.echo(defer(x[i]), i, i*2);
       }
    }
 
-   eq(x, expected_one);
+   eq(x, expected_x);
 
    done();
 });
 
 test("array notation serial each", function(done){
 
-   let x = [];
+   var x = [];
 
+   // does works but there is no way to get the results
+   // this is just a poorly structured parallel pattern
+   // you can achieve the same thing wrapping the whole each and using array notation
    _.each(_.range(n), function(i){
       await { 
          async.echo(defer(x[i]), i, i*2);
       }
    });
 
-   eq(x, expected_one);
-   done();
-
+   setTimeout(function(){
+      eq(x, expected_x);
+      done();
+   }, ((n+1) * 10));
 });
-*/
 
+test("array notation serial complex lhs", function(done){
 
-/*
-
-test("array notation", function(done){
-    
-   var x = [];
+   var hard = { foo : { bar: [ { baz : [] } ] } };
 
    for(var i = 0; i < n; i++){
       await { 
-         async.echo(defer(x[i]), i, i*2);
+         async.echo(defer(hard.foo["bar"][0].baz[i]), i, i*2);
       }
    }
 
-   eq(x, expected);
+   eq(hard.foo["bar"][0].baz, expected_x);
 
    done();
 
 });
 
+test("array notation serial each async", function(done){
 
-test("array notation", function(done){
+   let foo = { x: [] };
+   let y = [];
+   let ignore = [];
+
+   await{
+      _.each.async(_.range(n), function(i, v, next){
+         await { async.echo(defer(foo.x[i], ignore), i, i*2); }
+         await { async.echo(defer(ignore, y[i]), i, i*2); }
+         next();
+      }, defer());
+   }
+
+   eq(foo.x, expected_x);
+   eq(y, expected_y);
+
+   done();
+
+});
+
+/*
+
+test("array notation parallel", function(done){
     
+   var x = [];
+
    await { 
       for(var i = 0; i < n; i++){
          async.echo(defer(let x[], y[]), i, i*2);
       }
    }
 
-   eq(x, _.range(n));
-   eq(y, _.map(_.range(n), function(v){ return(v*2); }));
+   eq(x, expected_x);
+   eq(y, expected_y);
 
    done();
 
 });
 
-test("array notation raw", function(done){
+test("array notation parallel each", function(done){
+    
+   var x = [];
+
+   await { 
+      _.each(_.range(n), function(i){
+         async.echo(defer(let x[], y[]), i, i*2);
+      });
+   }
+
+   eq(x, expected_x);
+   eq(y, expected_y);
+
+   done();
+
+});
+
+
+
+test("array notation parallel raw", function(done){
     
    await { 
       for(var i = 0; i < n; i++){
@@ -164,49 +207,7 @@ test("array notation raw", function(done){
       }
    }
 
-   var expected = _.map(_.range(n), function(v){ return([v, v*2]); });
-
-   eq(x, expected);
-
-   done();
-
-});
-
-test("array notation raw complex lhs", function(done){
-
-   var hard = { foo : { bar: [ { baz : [] } ] } };
-
-   for(var i = 0; i < n; i++){
-      await { 
-         async.echo(defer(hard.foo["bar"][0].baz[]), i, i*2);
-      }
-   }
-
-   var expected = _.map(_.range(n), function(v){ return([v, v*2]); });
-
-   eq(hard.foo["bar"][0].baz, expected);
-
-   done();
-
-});
-
-test("array notation raw double indexed lhs", function(done){
-
-   var outer = [];
-
-   for(var j = 0; j < n; j++){
-      for(var i = 0; i < n; i++){
-         await { 
-            async.echo(defer(outer[j][]), i, i*2);
-         }
-      }
-   }
-
-   var expected = _.map(_.range(n), function(v){
-      return _.map(_.range(n), function(v){ return([v, v*2]); });
-   });
-
-   eq(outer, expected);
+   eq(x, expected_raw);
 
    done();
 
