@@ -32,6 +32,7 @@ var shell = function(command, options){
 
    shell("mkdir " + root("tests"));
 
+   var parse_time = _.time();
    _.each(files, function(file){
       var ext = _.path.extension(file.name);
       if(ext === "tjs"){
@@ -44,6 +45,8 @@ var shell = function(command, options){
          run_files.push(file.path);
       }
    });
+
+   parse_time("parse time");
 
    run_files = _.unique(run_files);
 

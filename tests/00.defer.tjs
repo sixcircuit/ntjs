@@ -1,8 +1,8 @@
 "use strict";
 
-var { eq, ok, async } = require('./common.js');
+var { _, eq, ok, async, immediate } = require('./common.js');
 
-test("defer", function(done){
+test("defer one", function(done){
 
    await{ async.echo(defer(var one), 1); }
 
@@ -12,9 +12,8 @@ test("defer", function(done){
 
 });
 
-test("defer immediate", function(done){
 
-   function immediate(callback, x){ callback(x); }
+test("defer immediate", function(done){
 
    await{ immediate(defer(var one), 1); }
 
@@ -23,4 +22,47 @@ test("defer immediate", function(done){
    done();
 
 });
- 
+
+test("defer many", function(done){
+
+   var time = _.timestamp();
+
+   await{ 
+      async.wait(defer(var one), 10);
+      async.wait(defer(var two), 20);
+      async.wait(defer(var three), 30);
+   }
+
+   time = _.timestamp() - time;
+
+   ok(time >= 30 && time < 40); // if they run in series they'd take 60ms minimum
+
+   eq(one, 10);
+   eq(two, 20);
+   eq(three, 30);
+
+   done();
+
+});
+
+test("defer many with immediate", function(done){
+   
+   var time = _.timestamp();
+
+   await{ 
+      immediate(defer(var one), 0);
+      async.wait(defer(var two), 20);
+      async.wait(defer(var three), 30);
+   }
+
+   time = _.timestamp() - time;
+
+   ok(time >= 30 && time < 40); // if they run in series they'd take 50ms minimum
+
+   eq(one, 0);
+   eq(two, 20);
+   eq(three, 30);
+
+   done();
+
+});
