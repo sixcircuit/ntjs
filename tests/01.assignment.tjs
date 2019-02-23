@@ -2,6 +2,7 @@
 
 var { _, eq, ok, async } = require('./common.js');
 
+/*
 test("var x, y", function(done){
 
    await{ async.echo(defer(var x, y), 1, 2); }
@@ -38,14 +39,14 @@ test("assign to let x, y", function(done){
 });
 
 
-/* this blows up, like it's supposed to
-test("assign to const x, y", function(done){
-   const x, y;
-   await{ async.echo(defer(x, y), 1, 2); }
-   eq(x, 1); eq(y, 2);
-   done();
-});
-*/
+// this blows up, like it's supposed to
+// test("assign to const x, y", function(done){
+//    const x, y;
+//    await{ async.echo(defer(x, y), 1, 2); }
+//    eq(x, 1); eq(y, 2);
+//    done();
+// });
+
 
 test("assign in a for loop", function(done){
 
@@ -80,12 +81,14 @@ test("assign to object key", function(done){
 
    done();
 });
+*/
 
 const n = 10;
 const expected_x = _.map(_.range(n), function(v){ return(v); });
 const expected_y = _.map(_.range(n), function(v){ return(v*2); });
 const expected_raw = _.map(_.range(n), function(v){ return([v, v*2]); });
 
+/*
 test("array notation serial", function(done){
 
    var x = [];
@@ -179,7 +182,6 @@ test("array notation serial parallel each async", function(done){
    done();
 });
 
-
 test("array notation parallel", function(done){
     
    await { 
@@ -194,11 +196,18 @@ test("array notation parallel", function(done){
    done();
 
 });
+*/
 
 test("array notation parallel each", function(done){
-    
-   throw new Error("need to finish parallel array notation");
+   throw new Error("need to finish testing parallel array notation");
 });
+
+/*
+// test("bad parses", function(done){
+//    // should blow up
+//    defer{ async.echo(defer(let raw x)); }
+//    defer{ async.echo(defer(let x[], y)); }
+// });
 
 /*
 test("array notation parallel each", function(done){
@@ -231,8 +240,21 @@ test("array notation parallel raw", function(done){
    eq(x, expected_raw);
 
    done();
-
 });
+
+test("array notation parallel raw", function(done){
+   let x;    
+   await { 
+      for(var i = 0; i < n; i++){
+         async.echo(defer(raw x[]), i, i*2);
+      }
+   }
+
+   eq(x, expected_raw);
+
+   done();
+});
+
 
 test("array notation multiple parallel each", function(done){
     
@@ -282,3 +304,19 @@ test("array notation multiple parallel each", function(done){
 });
 
 */
+
+test("array notation one off", function(done){
+    
+   await { 
+      for(var i = 0; i < n; i++){
+         async.echo(defer(let x[], y[]), i, i*2);
+      }
+   }
+
+   eq(x, expected_x);
+   eq(y, expected_y);
+
+   done();
+
+});
+
