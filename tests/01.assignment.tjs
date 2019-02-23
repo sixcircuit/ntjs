@@ -23,14 +23,22 @@ test("const x, y", function(done){
    done();
 });
 
-test("assign to x, y", function(done){
+test("assign to var x, y", function(done){
+   var x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("assign to let x, y", function(done){
    let x, y;
    await{ async.echo(defer(x, y), 1, 2); }
    eq(x, 1); eq(y, 2);
    done();
 });
 
-/*
+
+/* this blows up, like it's supposed to
 test("assign to const x, y", function(done){
    const x, y;
    await{ async.echo(defer(x, y), 1, 2); }
@@ -39,21 +47,18 @@ test("assign to const x, y", function(done){
 });
 */
 
-/*
-test("a test of fulfill values", function(done){
+test("assign in a for loop", function(done){
 
    for(var i = 0; i < 20; i++){
       var x = Math.random();
-      await{ async.echo(defer(var y, z), x, 2); }
-      eq(y, x);
-      eq(z, 2);
+      await{ async.echo(defer(var xx, two), x, 2); }
+      eq(xx, x);
+      eq(two, 2);
    }
 
    done();
 });
-*/
 
-/*
 test("assign to array index", function(done){
 
    var a = [];
@@ -75,53 +80,6 @@ test("assign to object key", function(done){
 
    done();
 });
-
-*/
-
-/*
-test("test capture of defer slots", function(done){
-
-   var slots = {};
-   var n = 10;
-
-   var slots = [], x = {}, jams = []; 
-
-   var hard = { foo : { bar: [ { baz : [] } ] } };
-
-   function helper(i, cb){
-      await{ setTimeout(defer(), i); }
-      return cb(i, 7*i, 2*i, 3*i);
-   }
-
-   for (var i = 0; i < n; i++) {
-      x[i] = i;
-   }
-
-   var dummy = { puppy : 0 };
-
-   await {
-      for (var i = 0; i < n; i++) {
-         helper(i, defer(
-            slots[x[i]],
-            dummy.puppy, jams[i], 
-            hard.foo["bar"][0].baz[i]
-         ));
-      }
-   }
-
-   for (var i = 0; i < n; i++){
-      _.p("i.0: ", i);
-      eq(slots[i], i);
-      _.p("i.1: ", i);
-      eq(jams[i], i*2);
-      _.p("i.2: ", i);
-      eq(hard.foo.bar[0].baz[i], i*3);
-      _.p("i.3: ", i);
-    }
-
-    done();
-});
-*/
 
 const n = 10;
 const expected_x = _.map(_.range(n), function(v){ return(v); });
@@ -148,7 +106,7 @@ test("array notation serial each", function(done){
 
    var x = [];
 
-   // does works but there is no way to get the results
+   // works but there is no way to get the results
    // this is just a poorly structured parallel pattern
    // you can achieve the same thing wrapping the whole each and using array notation
    _.each(_.range(n), function(i){
@@ -198,6 +156,29 @@ test("array notation serial each async", function(done){
 
    done();
 });
+
+test("array notation serial parallel each async", function(done){
+
+   let foo = { x: [] };
+   let y = [];
+   let ignore = [];
+
+   await{
+      _.each.async(_.range(n), function(i, v, next){
+         await { 
+            async.echo(defer(foo.x[i], ignore), i, i*2);
+            async.echo(defer(ignore, y[i]), i, i*2); 
+         }
+         next();
+      }, defer());
+   }
+
+   eq(foo.x, expected_x);
+   eq(y, expected_y);
+
+   done();
+});
+
 
 test("array notation parallel", function(done){
    throw new Error("need to finish parallel array notation");
