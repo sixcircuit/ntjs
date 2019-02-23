@@ -181,11 +181,7 @@ test("array notation serial parallel each async", function(done){
 
 
 test("array notation parallel", function(done){
-   throw new Error("need to finish parallel array notation");
     
-   /*
-   var x = [];
-
    await { 
       for(var i = 0; i < n; i++){
          async.echo(defer(let x[], y[]), i, i*2);
@@ -196,13 +192,17 @@ test("array notation parallel", function(done){
    eq(y, expected_y);
 
    done();
-   */
 
+});
+
+test("array notation parallel each", function(done){
+    
+   throw new Error("need to finish parallel array notation");
 });
 
 /*
 test("array notation parallel each", function(done){
-    
+
    var x = [];
 
    await { 
