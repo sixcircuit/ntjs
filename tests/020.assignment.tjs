@@ -1,0 +1,120 @@
+"use strict";
+
+var { _, eq, ok, timer, async } = require('./common.js');
+
+function expect(x, y, done){
+   eq(x, 1); eq(y, 2); 
+   if(done){ done(); }
+}
+
+test("var x, y", function(done){
+   await{ async.echo(defer(var x, y), 1, 2); }
+   expect(x, y, done);
+});
+
+test("let x, y", function(done){
+   await{ async.echo(defer(let x, y), 1, 2); }
+   expect(x, y, done);
+});
+
+test("const x, y", function(done){
+   await{ async.echo(defer(const x, y), 1, 2); }
+   expect(x, y, done);
+});
+
+test("assign to var x, y", function(done){
+   var x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   expect(x, y, done);
+});
+
+test("assign to let x, y", function(done){
+   let x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   expect(x, y, done);
+});
+
+test("assign in a for loop", function(done){
+
+   for(var i = 0; i < 20; i++){
+      var x = Math.random();
+      await{ async.echo(defer(var xx, two), x, 2); }
+      eq(xx, x);
+      eq(two, 2);
+   }
+
+   done();
+});
+
+test("assign to array index", function(done){
+
+   var a = [];
+
+   await{ async.echo(defer(a[0], a[1], a[2]), 0, 1, 2); }
+
+   eq(a, [0, 1, 2]);
+
+   done();
+});
+
+test("assign to object key", function(done){
+
+   var o = {};
+
+   await{ async.echo(defer(o.zero, o.one, o.two), 0, 1, 2); }
+
+   eq(o, { zero: 0, one: 1, two: 2 });
+
+   done();
+});
+
+test("assign to deep object", function(done){
+
+   var o = { a: { b: { c: {}, bb: {} } } };
+   var expected = { a: { b: { c: "c", bb: "bb" } } };
+
+   await{ async.echo(defer(o.a.b.c, o.a.b.bb), "c", "bb"); }
+
+   eq(o, expected);
+
+   done();
+});
+
+test("assign to object destructure", function(done){
+
+   // TODO: one day: support this syntax, for completeness sake
+   // it doesn't break the parser, the defer() parser actually parses comments
+   // await{ async.echo(defer(let { a, b, c }, { d, e }), { a: "a", b: "b", c: "c" }, { d: "d", e: "e" }); }
+   // await{ async.echo(defer(let [ a, b, c ], [ d, e ]), [ "a", "b", "c" ], [ "d", "e" ]); }
+
+   await{ async.echo(defer(let abc, de), { a: "a", b: "b", c: "c" }, { d: "d", e: "e" }); }
+
+   let { a, b, c } = abc;
+   let { d, e } = de;
+
+   eq(a, "a");
+   eq(b, "b");
+   eq(c, "c");
+   eq(d, "d");
+   eq(e, "e");
+
+   done();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

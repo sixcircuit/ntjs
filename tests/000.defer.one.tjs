@@ -1,0 +1,23 @@
+"use strict";
+
+var { _, eq, ok, async, immediate } = require('./common.js');
+
+test("defer one", function(done){
+
+   await{ async.echo(defer(var one), 1); }
+
+   eq(one, 1);
+
+   done();
+
+});
+
+test("defer immediate", function(done){
+
+   await{ immediate(defer(var one), 1); }
+
+   eq(one, 1);
+
+   done();
+
+});

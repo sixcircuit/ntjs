@@ -1,0 +1,44 @@
+"use strict";
+
+var { _, eq, ok, timer, async, immediate } = require('./common.js');
+
+test("defer many", function(done){
+
+   var time = timer();
+
+   await{ 
+      async.wait(defer(var one), 10);
+      async.wait(defer(var two), 20);
+      async.wait(defer(var three), 30);
+   }
+
+
+   time(30, 10);
+
+   eq(one, 10);
+   eq(two, 20);
+   eq(three, 30);
+
+   done();
+
+});
+
+test("defer many with immediate", function(done){
+   
+   var time = timer();
+
+   await{ 
+      immediate(defer(var one), 0);
+      async.wait(defer(var two), 20);
+      async.wait(defer(var three), 30);
+   }
+
+   time(30, 10);
+
+   eq(one, 0);
+   eq(two, 20);
+   eq(three, 30);
+
+   done();
+
+});

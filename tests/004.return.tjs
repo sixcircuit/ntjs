@@ -97,3 +97,32 @@ test("test that return value side effects happen again", function(done){
    done();
 
 });
+
+// DOCUMENT: possibly unexpected. return is wrapped because it's async
+test("return before await", async function(done){
+
+   var result = (function(cb){
+      return(10);
+      await { async.echo(defer()); }
+   })();
+
+   eq(await result, 10);
+
+   done();
+});
+
+test("return callback", function(done){
+
+   let flag = false;
+
+   (function(cb){
+      return cb();
+      await { async.echo(defer(flag), true); }
+   })(function cb(){
+      setTimeout(function(){
+         eq(flag, false);
+         done();
+      }, 100);
+   });
+});
+

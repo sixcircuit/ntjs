@@ -1,0 +1,75 @@
+"use strict";
+
+var { _, eq, ok, timer, async } = require('./common.js');
+
+test("defer one nested var", function(done){
+
+   await{ 
+      await{
+         await{ 
+            async.echo(defer(var one), 1);
+         }
+      }
+   }
+
+   eq(one, 1);
+
+   done();
+
+});
+
+
+test("defer many nested", function(done){
+
+   var time = timer();
+
+   await{ 
+      await{ 
+         async.wait(defer(var one), 10); // 10
+      }
+      time(10, 5);
+      await{
+         await{
+            async.wait(defer(var two), 20); 
+            async.wait(defer(var three), 30); // 30
+         }
+      }
+      time(30, 5);
+      async.wait(defer(var four), three); // 30
+   }
+   time(30, 5);
+
+   eq(one, 10);
+   eq(two, 20);
+   eq(three, 30);
+   eq(four, 30);
+
+   done();
+
+});
+
+
+// DOCUMENT: this is weird
+test("defer many nested for", function(done){
+   
+   var time = timer();
+
+   let x;
+
+   await{ 
+      for(var i = 0; i < 10; i++){
+         await{ async.echo(10, defer(x[]), i); }
+         // same as
+         // await{ async.echo(10, defer(x), i); }
+         // x = i, every time
+      }
+   }
+
+   timer(100, 10);
+
+   // we get the last value of i, which is i. it's nonsensical, but it "works" as you'd expect.
+   eq(x, [9]);
+
+   done();
+
+});

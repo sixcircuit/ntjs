@@ -1,0 +1,67 @@
+
+"use strict";
+
+var { _, eq, ok, async, immediate } = require('./common.js');
+
+/* bad parses. they should be.
+ 
+test("defer one nested let out of scope (var works though)", function(done){
+
+   await{ 
+      await{
+         await{ 
+            async.echo(defer(let one), 1);
+         }
+      }
+   }
+
+   eq(one, 1);
+
+   done();
+
+});
+
+test("assign to const x, y", function(done){
+   const x, y;
+   await{ async.echo(defer(x, y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("two raw variables", function(done){
+   await{ async.echo(defer(raw x[], y[]), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("raw without [] variable", function(done){
+   await{ async.echo(defer(raw x), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("lacking [] on all variables", function(done){
+   await{ async.echo(defer(let x[], y), 1, 2); }
+   eq(x, 1); eq(y, 2);
+   done();
+});
+
+test("array notation parallel raw let", function(done){
+
+   await { 
+      for(var i = 0; i < _n; i++){
+         async.echo(defer(let raw deep.a.b.x[]), i, i*2);
+      }
+   }
+
+   expect_raw(deep.a.b.x, done);
+});
+
+*/
+
+test("fix this", function(done){
+   throw _.error("implement", "these tests are unimplemented");
+   done();
+});
+
+
