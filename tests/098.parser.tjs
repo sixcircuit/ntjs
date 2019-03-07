@@ -6,7 +6,7 @@ test("pass through / compile test", function(done){
 
    var flag = false;
 
-   function make_dict () {
+   function make_dict(){
       for (var i = 0; i < 100; i++);
       var d = { cat : function (n, cb) {
          for (var i = 0; i < n; i++) {

@@ -43,12 +43,12 @@ function timer(abs){
       margin = margin || 0;
       const diff = _.timestamp() - start;
       if(diff < expected_diff){
-         let err = _.error("not_eq", `timer expected: ${diff} < ${expected_diff}`);
+         let err = _.error("not_eq", `timer expected: ${diff} >= ${expected_diff}`);
          err.actual = diff;
          err.expected = expected_diff;
          throw err;
       }else if(diff > (expected_diff + margin)){
-         let err = _.error("not_eq", `timer expected: ${diff} > ${ expected_diff + margin } (${expected_diff} + margin(${margin}))`);
+         let err = _.error("not_eq", `timer expected: ${diff} < ${ expected_diff + margin } (${expected_diff} + margin(${margin}))`);
          err.actual = diff;
          err.expected = expected_diff;
          throw err;

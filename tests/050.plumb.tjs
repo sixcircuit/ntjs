@@ -2,7 +2,7 @@
 
 var { _, eq, ok, async, immediate } = require('./common.js');
 
-test("plumb one", function(done){
+test("plumb one fail", function(done){
 
    function handler(err){
       ok(err.flag);
@@ -11,9 +11,66 @@ test("plumb one", function(done){
 
    await{ async.echo(_.plumb(defer(), handler), { flag: true }); }
 
+   // never gets here
+
    ok(false);
+
+});
+
+test("plumb one succeed", function(done){
+
+   function handler(err){
+      ok(false);
+   }
+
+   await{ async.echo(_.plumb(defer(let one), handler), null, 1); }
+
+   eq(one, 1);
+
+   done();
+});
+
+test("plumb two", function(done){
+
+   function handler(err){
+      ok(err.flag);
+      done();
+   }
+
+   await{ 
+      async.echo(_.plumb(defer(var one), handler), null, 1);
+      async.echo(_.plumb(defer(), handler), { flag: true });
+   }
 
    // never gets here
 
+   ok(false);
+
 });
+
+test("plumb array", function(done){
+
+   var once = true;
+   function handler(err){
+      if(!once){ return; } once = false;
+      ok(err.flag);
+      done();
+   }
+
+   function error_on_two(i){
+      if(i === 2){ return({ flag: true }); }
+      else{ return(null); }
+   }
+
+   await{ 
+      _.each(_.range(10), function(i){
+         async.echo(_.plumb(defer(var x[]), handler), error_on_two(i), i);
+      });
+   }
+
+   // never gets here
+   ok(false);
+});
+
+
 

@@ -27,17 +27,17 @@ test("defer many nested", function(done){
       await{ 
          async.wait(defer(var one), 10); // 10
       }
-      time(10, 5);
+      time(10, 9);
       await{
          await{
             async.wait(defer(var two), 20); 
             async.wait(defer(var three), 30); // 30
          }
       }
-      time(30, 5);
+      time(30, 9);
       async.wait(defer(var four), three); // 30
    }
-   time(30, 5);
+   time(30, 9);
 
    eq(one, 10);
    eq(two, 20);

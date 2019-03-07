@@ -57,6 +57,24 @@ test("array notation parallel raw let", function(done){
    expect_raw(deep.a.b.x, done);
 });
 
+test("array notation multiple parallel each", function(done){
+    
+   await { 
+      _.each(_.range(_n), function(i){
+         async.echo(defer(let x[], y[]), i, i*2);
+         async.echo(defer(let xx[], yy[]), i*3, i*4);
+      });
+   }
+
+   eq(x, expected_x);
+   eq(y, expected_y);
+   eq(xx, _.map(_.range(_n), function(n){ return(n*3); }));
+   eq(yy, _.map(_.range(_n), function(n){ return(n*4); }));
+
+   done();
+
+});
+
 */
 
 test("fix this", function(done){
