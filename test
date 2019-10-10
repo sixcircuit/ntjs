@@ -3,7 +3,7 @@
 var _ = require('dry-underscore');
 var cp = require('child_process');
 var root = _.path.fun(_.path.normalize(__dirname));
-var parser = require('./lib/parser.js');
+var tamejs = require('.');
 
 var shell = function(command, options){
    try{ cp.execSync(command, _.extend({}, options, { stdio: [0,1,2] })); }
@@ -32,13 +32,16 @@ var shell = function(command, options){
 
    shell("mkdir " + root("tests") + " 2> /dev/null");
 
-   var parse_time = _.time();
+   var total_time = _.time();
+
    _.each(files, function(file){
       var ext = _.path.extension(file.name);
       if(ext === "tjs"){
          _.p("processing: ", "tests/" + file.name);
          var dest = root("tests", (_.path.extension(file.name, "") + ".test.js"));
-         var gen = parser.file(file.path);
+         // var parse_time = _.time();
+         var gen = tamejs.parse.file(file.path);
+         // parse_time("parse time: " + file.name + ": ");
          _.fs.write_file.sync(dest, gen.code);
          run_files.push(dest);
       }else if(ext === "js" && file.name !== "common.js"){
@@ -46,7 +49,7 @@ var shell = function(command, options){
       }
    });
 
-   parse_time("parse time");
+   total_time("parse time");
 
    run_files = _.unique(run_files);
 

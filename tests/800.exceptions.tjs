@@ -1,0 +1,25 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+function async_throw(cb, err){ async.echo(function(){ throw(err); }); }
+
+
+// this just tests that the parser doesn't do weird stuff.
+test("try/catch", function(done){
+
+   try{ throw("blah"); }catch(e){ eq(e, "blah"); }
+
+   try{
+      // await{ async_throw(defer(), _.error("test_err", "test error.", { flag: true })); }
+      await{ async.echo(defer(let one), 1); }
+      await{ async.echo(defer(var two), 2); }
+      eq(one, 1);
+   }catch(e){
+      throw(e); // shouldn't get here
+   }
+
+   eq(two, 2);
+   done();
+
+});

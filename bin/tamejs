@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var _ = require('dry-underscore');
-var parser = require('../lib/parser.js');
+var tamejs = require('..');
 
 var all_time = _.time();
 
@@ -24,12 +24,10 @@ function usage(code){
       args.shift();
    }
 
-   var gen = parser.file({ 
+   var gen = tamejs.parse.file({ 
       path: args[0], 
-      generator: { 
-         compact: false, 
-         sourceMaps: print_map 
-      } 
+      maps: print_map,
+      steps: false
    });
 
    if(print_map){

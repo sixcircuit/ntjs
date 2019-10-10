@@ -228,14 +228,18 @@ test("array notation multiple parallel each", function(done){
          (function(cb){
             var t = timer();
             await{
-               async.echo(10, defer(let x, y), i, i*2);
-               async.echo(20, defer(let xx, yy), i*3, i*4);
+               async.echo(50, defer(let x, y), i, i*2);
+               async.echo(100, defer(let xx, yy), i*3, i*4);
             }
-            t(20, 9); // would be minimum 30 if they ran serial
+            t(100, 20); // would be minimum 150 if they ran serial
             cb(x, y, xx, yy);
          })(defer(let x[], y[], xx[], yy[]))
       });
    }
+
+   // TODO: I THINK YOU CAN DO THIS
+   // you just need to keep track of the index and update the runtime to take cb(true, 0) and cb(true, 1)
+   // although i've literally never needed to do this, and we have a work around. this can go in the nice to have column.
 
    // would be equivalent to this, but this doesn't work.
    // await { 
@@ -246,7 +250,7 @@ test("array notation multiple parallel each", function(done){
    // }
 
 
-   abs(20, 20); // would be minimum _n * 20 if they ran serial
+   abs(100, 50); // would be minimum _n * 100 if they ran serial
 
    eq(x, expected_x);
    eq(y, expected_y);

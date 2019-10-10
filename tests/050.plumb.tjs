@@ -1,6 +1,6 @@
 "use strict";
 
-var { _, eq, ok, async, immediate } = require('./common.js');
+var { _, eq, ok, async } = require('./common.js');
 
 test("plumb one fail", function(done){
 

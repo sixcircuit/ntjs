@@ -1,0 +1,15 @@
+
+module.exports = function(){
+   await{ 
+      await{
+         await{ 
+            async.echo(defer(let one), 1);
+         }
+      }
+   }
+
+   if(one === 1){
+      throw("never gets here");
+   }
+};
+

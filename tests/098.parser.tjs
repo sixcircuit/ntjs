@@ -2,6 +2,11 @@
 
 var { _, eq, ok, async } = require('./common.js');
 
+test("parse _.defer", function(done){
+   await{ _.defer(defer()); }
+   done();
+});
+
 test("pass through / compile test", function(done){
 
    var flag = false;

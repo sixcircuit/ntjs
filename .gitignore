@@ -1,6 +1,7 @@
 npm-debug.log
 node_modules
 .*.tjs.*.cache
+.*.tame.js
 .*.test.js
 /tests/*.test.js
 ignore

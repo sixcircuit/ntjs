@@ -1,11 +1,32 @@
 {
-  "dependencies": {
-    "babel-generator": "^6.26.1",
-    "babel-template": "^6.26.0",
-    "babel-traverse": "^6.26.0",
-    "babel-types": "^6.26.0",
-    "babylon": "^6.18.0",
-    "dry-test": "^0.1.6",
-    "dry-underscore": "^0.24.2"
-  }
+   "name": "tamejs",
+   "version": "1.0.0-beta.0",
+   "author": "Kendrick Taylor <kendrick@circuitsix.com>",
+   "description": "ES6 compatible JS to JS code rewriter for preventing callback hell with callback / errorback style code",
+   "repository": {
+      "type" : "git",
+      "url" : "git://github.com/curious-inc/tamejs.git"
+   },
+   "main": "lib/lib.js",
+   "bin": {
+      "tamejs" : "bin/tamejs"
+   },
+   "engines" : "node >= 8",
+   "directories" : {
+      "lib" : "./lib",
+      "bin" : "./bin"
+   },
+   "homepage": "http://github.com/curious-inc/tamejs",
+   "bugs" : {
+      "url" : "http://github.com/curious-inc/tamejs/issues"
+   },
+   "dependencies": {
+      "babel-generator": "^6.26.1",
+      "babel-template": "^6.26.0",
+      "babel-traverse": "^6.26.0",
+      "babel-types": "^6.26.0",
+      "babylon": "^6.18.0",
+      "dry-test": "^0.1.6",
+      "dry-underscore": "^0.24.2"
+   }
 }

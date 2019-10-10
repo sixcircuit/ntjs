@@ -1,26 +1,41 @@
-
 "use strict";
 
-var { _, eq, ok, async, immediate } = require('./common.js');
+var { _, eq, ok, async } = require('./common.js');
 
-/* bad parses. they should be.
- 
-test("defer one nested let out of scope (var works though)", function(done){
+test("await as property name", function(done){
 
-   await{ 
-      await{
-         await{ 
-            async.echo(defer(let one), 1);
-         }
-      }
-   }
+   await{ async.echo(defer(var x), 1); }
 
-   eq(one, 1);
+   eq(x, 1);
+
+   var foo = { await: "hello" };
+   eq(foo.await, "hello");
+
+   var bar = { await: { a: "hello" } };
+   eq(bar.await, { a: "hello" });
+
+   foo.await = "blah";
+   eq(foo.await, "blah");
+
+   foo["await"] = "yes";
+   eq(foo["await"], "yes");
 
    done();
 
 });
 
+test("defer one nested let out of scope (var works though)", function(done){
+
+   try{
+      var bad = require("./syntax_errors/nested_let_out_of_scope.tjs");
+   }catch(e){
+      throw(e);
+   }
+
+});
+
+/* bad parses. they should be.
+ 
 test("assign to const x, y", function(done){
    const x, y;
    await{ async.echo(defer(x, y), 1, 2); }

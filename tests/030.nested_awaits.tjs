@@ -25,24 +25,24 @@ test("defer many nested", function(done){
 
    await{ 
       await{ 
-         async.wait(defer(var one), 10); // 10
+         async.echo(100, defer(var one), 1); 
       }
-      time(10, 9);
+      time(100, 50);
       await{
          await{
-            async.wait(defer(var two), 20); 
-            async.wait(defer(var three), 30); // 30
+            async.echo(200, defer(var two), 2); 
+            async.echo(300, defer(var three_hundred), 300); 
          }
       }
-      time(30, 9);
-      async.wait(defer(var four), three); // 30
+      time(300, 50);
+      async.echo(three_hundred, defer(var four), three_hundred);
    }
-   time(30, 9);
+   time(300, 50);
 
-   eq(one, 10);
-   eq(two, 20);
-   eq(three, 30);
-   eq(four, 30);
+   eq(one, 1);
+   eq(two, 2);
+   eq(three_hundred, 300);
+   eq(four, 300);
 
    done();
 
@@ -58,14 +58,14 @@ test("defer many nested for", function(done){
 
    await{ 
       for(var i = 0; i < 10; i++){
-         await{ async.echo(10, defer(x[]), i); }
+         await{ async.echo(100, defer(x[]), i); }
          // same as
          // await{ async.echo(10, defer(x), i); }
          // x = i, every time
       }
    }
 
-   timer(100, 10);
+   timer(1000, 50);
 
    // we get the last value of i, which is i. it's nonsensical, but it "works" as you'd expect.
    eq(x, [9]);

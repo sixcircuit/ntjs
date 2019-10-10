@@ -1,13 +1,21 @@
 
 var _ = require('dry-underscore');
 
-var { eq, ok } = _.test;
+var { eq, ne, ok } = _.test;
 
-function async_wait(callback, msec){ 
-   setTimeout(function(){
-      return callback(msec);
-   }, msec);
-}
+// TODO: replace all of this with _.test.no, _.test.ne, _.test.timer, _.test.echo and _.test.inc
+
+function no(v){ return ok(!v); }
+var ne = function(actual, expected, message){
+   var diff = _.diff(actual, expected);
+   if(!diff){
+      message = message || _.format("actual and expected are equal. we expected not equal. actual: ", actual);
+      var err = _.error("is_eq", message);
+      throw(err);
+   }
+};
+
+
 
 function async_echo(callback){ 
    var args = _.a(arguments).slice(1);
@@ -20,6 +28,8 @@ function async_echo(callback){
       args.shift();
    }
 
+   if(delay < 0){ return callback.apply(null, args); }
+
    setTimeout(function(){
       return callback.apply(null, args);
    }, delay);
@@ -31,12 +41,6 @@ function async_inc(callback, i){
    }, (Math.random() * 10));
 }
 
-function immediate(callback, x){ 
-   var args = _.a(arguments).slice(1);
-   return callback.apply(null, args);
-}
-
-// replace this with _.test.timer
 function timer(abs){
    let start = _.timestamp();
    return(function(expected_diff, margin){
@@ -57,13 +61,11 @@ function timer(abs){
    });
 }
 
-
-var async = { echo: async_echo, inc: async_inc, wait: async_wait };
+var async = { echo: async_echo, inc: async_inc };
 
 module.exports = {
    _,
    async,
    timer,
-   immediate,
-   ok, eq
+   ok, eq, no, ne
 };

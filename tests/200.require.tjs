@@ -1,0 +1,20 @@
+
+var { _, eq, ok, timer, async } = require('./common.js');
+
+test("require tjs", function(done){
+
+   require('../').register();
+
+   var tjs = require('./require/simple.tjs');
+
+   var time = timer();
+
+   await{ tjs.run(100, defer()); }
+
+   time(100, 10);
+
+   done();
+
+});
+
+
