@@ -14,7 +14,7 @@ This package is a completely rewritten and modernized version of the original ta
    // 2
 ```
 
-The best way to get a sense of how it works is to take a look at all the tests.
+The best way to get a sense of how it works is to take a look at all the tests. If you want to understand what the compiled files look like, run the tests and examine the .js files that are built and stored next to the corresponding .tjs test files.
 
 Tamejs was the best way to avoid callback hell for years, and I used it on all my projects. The goal of this project is to support legacy codebases that use tamejs, and for me to have some fun with transpilers. Also, if you're still attached to callbacks over promises, this is a hugely helpful project. It also supports a much more elegant parallelism (with a higher degree of control) than `await Promise.all`
 
