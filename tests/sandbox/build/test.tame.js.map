@@ -1,0 +1,5 @@
+{ version: 3,
+  sources: [ 'test.tjs' ],
+  names: [ 'exports', 'run', 'delay', 'callback', 'setTimeout' ],
+  mappings: ';;;;;;;;AACAA,QAAQC,GAAR,GAAc,gBAASC,KAAT,EAAgBC,QAAhB,EAAyB;AAAA;;AAEjB;AAAEC,0CAAoBF,KAApB;AAA6B;;AAFd;AAIpC,UAAOC,UAAP;AAEF,CAND',
+  sourcesContent: [ '\nexports.run = function(delay, callback){\n\n   await{ setTimeout(defer(), delay); }\n\n   return callback();\n\n};\n' ] }

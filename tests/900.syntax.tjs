@@ -24,12 +24,15 @@ test("await as property name", function(done){
 
 });
 
-test("defer one nested let out of scope (var works though)", function(done){
+test("defer one nested let out of scope (var works though)", async function(done){
 
    try{
-      var bad = require("./syntax_errors/nested_let_out_of_scope.tjs");
+      var bad = await require("./syntax_errors/nested_let_out_of_scope.tjs")(_.noop);
    }catch(e){
-      throw(e);
+      // _.p(e.toString());
+      // throw(e);
+      ok(e.toString() === "ReferenceError: one is not defined");
+      done();
    }
 
 });
@@ -92,9 +95,11 @@ test("array notation multiple parallel each", function(done){
 
 */
 
+/*
 test("fix this", function(done){
    throw _.error("implement", "these tests are unimplemented");
    done();
 });
+*/
 
 

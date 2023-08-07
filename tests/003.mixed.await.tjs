@@ -1,0 +1,33 @@
+"use strict";
+
+var { _, eq, ok, async } = require('./common.js');
+
+
+const timeout_p = function(ms, f){ 
+   return new Promise(function(resolve){
+      setTimeout(async function(){ if(f){ await f(); } resolve(); }, ms) 
+   }); 
+};
+
+test("await tamejs", function(done){
+
+   await  { async.echo(defer(var one), 1); }
+
+   eq(one, 1);
+
+   done();
+
+});
+
+test("await native", async function(done){
+
+   let one = 0;
+
+   await timeout_p(10, function(){ one = 1; });
+
+   eq(one, 1);
+
+   done();
+
+});
+

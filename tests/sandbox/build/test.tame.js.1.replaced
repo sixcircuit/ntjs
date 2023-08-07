@@ -1,0 +1,8 @@
+
+exports.run = function(delay, callback){
+
+   while(__tame_await){ setTimeout(defer(), delay); }
+
+   return callback();
+
+};

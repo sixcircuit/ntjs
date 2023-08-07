@@ -20,13 +20,15 @@
    "bugs" : {
       "url" : "http://github.com/curious-inc/tamejs/issues"
    },
+   "devDependencies": {
+      "dry-test": "^0.1.6"
+   },
    "dependencies": {
       "babel-generator": "^6.26.1",
       "babel-template": "^6.26.0",
       "babel-traverse": "^6.26.0",
       "babel-types": "^6.26.0",
       "babylon": "^6.18.0",
-      "dry-test": "^0.1.6",
       "dry-underscore": "^0.24.2"
    }
 }

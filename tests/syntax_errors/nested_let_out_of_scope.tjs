@@ -1,5 +1,8 @@
+"use strict";
 
-module.exports = function(){
+var { _, eq, ok, async } = require('../common.js');
+
+module.exports = function(callback){
    await{ 
       await{
          await{ 
@@ -11,5 +14,7 @@ module.exports = function(){
    if(one === 1){
       throw("never gets here");
    }
+
+   return callback();
 };
 

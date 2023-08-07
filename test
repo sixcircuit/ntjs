@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var _ = require('dry-underscore');
+const { _ } = require("./lib/common.js");
+
 var cp = require('child_process');
 var root = _.path.fun(_.path.normalize(__dirname));
 var tamejs = require('.');
@@ -40,7 +41,7 @@ var shell = function(command, options){
          _.p("processing: ", "tests/" + file.name);
          var dest = root("tests", (_.path.extension(file.name, "") + ".test.js"));
          // var parse_time = _.time();
-         var gen = tamejs.parse.file(file.path);
+         var gen = tamejs.parse.file({ path: file.path });
          // parse_time("parse time: " + file.name + ": ");
          _.fs.write_file.sync(dest, gen.code);
          run_files.push(dest);

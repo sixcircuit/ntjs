@@ -1,5 +1,5 @@
 
-var _ = require('dry-underscore');
+const { _ } = require("../lib/common.js");
 
 var { eq, ne, ok } = _.test;
 

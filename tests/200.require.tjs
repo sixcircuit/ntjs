@@ -3,7 +3,7 @@ var { _, eq, ok, timer, async } = require('./common.js');
 
 test("require tjs", function(done){
 
-   require('../').register();
+   require('tamejs').register();
 
    var tjs = require('./require/simple.tjs');
 

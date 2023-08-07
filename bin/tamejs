@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var _ = require('dry-underscore');
+const { _ } = require("../lib/common.js");
+
 var tamejs = require('..');
 
 var all_time = _.time();
